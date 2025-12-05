@@ -86,14 +86,12 @@ PORT=3000
 Notes:
 - Use the Klarna Playground (`https://api.playground.klarna.com`) for testing. Change to the production API when ready.
 - The demo `POST /api/session` endpoint creates a payments session and returns the `client_token`. The client uses this token to initialize the Klarna JS SDK.
-- The demo `POST /api/create_order` accepts an `authorization_token` from the client and returns success. Replace the demo implementation with a call to Klarna Order Management API to create/capture orders in production.
+- The demo `POST /api/create_order` accepts an `authorization_token` from the client and returns success. R
 
 ## Project Structure
 
 - `server.js` - Express server with `/client_token` endpoint
 - `public/index.html` - Frontend with Klarna Payments widget
+- `public/styles.css` - Stylesheet
+- `public/script.js` - Script js file
 - `package.json` - npm dependencies and scripts
-
-## Notes
-
-- This demo returns a placeholder token by default. For production, implement server-side integration to request a real client token from Klarna.
