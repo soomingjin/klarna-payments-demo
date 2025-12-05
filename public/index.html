@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Klarna Payments Demo</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="https://js.klarna.com/web-sdk/buttons/payment-button.css" />
+</head>
+
+<body>
+  <h1>Klarna Payments Demo</h1>
+
+  <section class="session-setup">
+    <h2>Session Setup</h2>
+    <label for="json-input">Session JSON payload (edit and send to backend):</label>
+    <textarea id="json-input">{
+  "purchase_country": "US",
+  "purchase_currency": "USD",
+  "locale": "en-US",
+  "order_amount": 10000,
+  "order_lines": [
+        {
+            "reference": "19-402",
+            "name": "Battery Power Pack",
+            "quantity": 1,
+            "unit_price": 10000,
+            "total_amount": 10000
+        }
+    ]
+}</textarea>
+    <div class="button-group">
+      <button id="create-session">Create Session</button>
+      <button id="reset-example">Reset Example</button>
+    </div>
+  </section>
+
+  <section class="checkout-wrapper">
+    <h2>Payment Method</h2>
+    <div id="klarna-container"></div>
+    <button class="klarna-sdk-button theme-dark shape-default" aria-label="Continue with Klarna" id="pay-button">
+      <div class="klarna-sdk-button__outline" aria-hidden="true"></div>
+      <div class="klarna-sdk-button__inner-container">
+        <span class="klarna-sdk-button__text">
+          <span class="klarna-sdk-button-copy">Continue with</span>
+          <span class="klarna-sdk-button-badge" aria-hidden="true"></span>
+          <span class="klarna-sdk-button-text-logo" aria-hidden="true"></span>
+        </span>
+        <span class="klarna-sdk-button__spinner" aria-hidden="true"></span>
+      </div>
+    </button>
+  </section>
+
+  <pre id="response"></pre>
+
+  <section class="order-management">
+    <h2>Order Management</h2>
+    <label for="order-id-input">Order ID:</label>
+    <input type="text" id="order-id-input" placeholder="Enter Klarna order ID">
+
+    <div class="order-buttons">
+      <button id="query-order">Query Order</button>
+      <button id="capture-order">Capture</button>
+      <button id="cancel-order">Cancel</button>
+      <button id="refund-order">Refund</button>
+    </div>
+  </section>
+
+  <script src="https://x.klarnacdn.net/kp/lib/v1/api.js"></script>
+  <script src="script.js"></script>
+</body>
+
+</html>
