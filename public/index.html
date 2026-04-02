@@ -12,9 +12,52 @@
 <body>
   <h1>Klarna Payments Demo</h1>
 
+  <nav class="step-indicators">
+    <div class="step active" data-step="1">
+      <span class="step-number">1</span>
+      <span class="step-label">Create Session</span>
+    </div>
+    <div class="step-connector"></div>
+    <div class="step" data-step="2">
+      <span class="step-number">2</span>
+      <span class="step-label">Authorize Payment</span>
+    </div>
+    <div class="step-connector"></div>
+    <div class="step" data-step="3">
+      <span class="step-number">3</span>
+      <span class="step-label">Manage Order</span>
+    </div>
+  </nav>
+
   <section class="session-setup">
     <h2>Session Setup</h2>
-    <label for="json-input">Session JSON payload (edit and send to backend):</label>
+
+    <div class="preset-row">
+      <div class="preset-field">
+        <label for="country-preset">Country / Currency</label>
+        <select id="country-preset">
+          <option value="US">US / USD</option>
+          <option value="SE">SE / SEK</option>
+          <option value="DE">DE / EUR</option>
+          <option value="GB">GB / GBP</option>
+          <option value="AU">AU / AUD</option>
+          <option value="AT">AT / EUR</option>
+          <option value="NL">NL / EUR</option>
+          <option value="NO">NO / NOK</option>
+          <option value="DK">DK / DKK</option>
+          <option value="FI">FI / EUR</option>
+        </select>
+      </div>
+      <div class="preset-field">
+        <label for="amount-input">Amount</label>
+        <div class="amount-wrapper">
+          <span class="currency-symbol" id="currency-symbol">$</span>
+          <input type="number" id="amount-input" value="100.00" min="0.01" step="0.01">
+        </div>
+      </div>
+    </div>
+
+    <label for="json-input">Session JSON payload:</label>
     <textarea id="json-input">{
   "purchase_country": "US",
   "purchase_currency": "USD",
@@ -32,11 +75,11 @@
 }</textarea>
     <div class="button-group">
       <button id="create-session">Create Session</button>
-      <button id="reset-example">Reset Example</button>
+      <button id="reset-example" class="btn-secondary">Reset Example</button>
     </div>
   </section>
 
-  <section class="checkout-wrapper">
+  <section class="checkout-wrapper section-hidden" id="checkout-section">
     <h2>Payment Method</h2>
     <div id="klarna-container"></div>
     <button class="klarna-sdk-button theme-dark shape-default" aria-label="Continue with Klarna" id="pay-button">
@@ -54,7 +97,7 @@
 
   <pre id="response"></pre>
 
-  <section class="order-management">
+  <section class="order-management section-hidden" id="order-section">
     <h2>Order Management</h2>
     <label for="order-id-input">Order ID:</label>
     <input type="text" id="order-id-input" placeholder="Enter Klarna order ID">

@@ -1,38 +1,37 @@
 # Klarna Payments Demo
 
-A minimal full-stack JavaScript project demonstrating Klarna Payments integration.
+A minimal full-stack JavaScript project demonstrating Klarna Payments integration with session creation, payment authorization, and order management.
 
 ## Installation
 
-Ensure [Yarn](https://yarnpkg.com/getting-started/install) is installed globally.
+Ensure [Node.js](https://nodejs.org/) (v18+) and [Yarn](https://yarnpkg.com/getting-started/install) are installed.
 
 ```bash
 yarn install
 ```
 
-## Running the Server
+## Configuration
+
+Copy the example environment file and fill in your Klarna Playground credentials:
 
 ```bash
-yarn start
+cp .env.example .env
 ```
 
-The server will start on `http://localhost:3000`.
+Required variables in `.env`:
 
-# Klarna Payments Demo
-
-A minimal full-stack JavaScript project demonstrating Klarna Payments integration.
-
-## Installation
-
-Ensure [Node.js](https://nodejs.org/) and `yarn` are installed.
-
-```bash
-yarn install
+```text
+KLARNA_API_URL=https://api-na.playground.klarna.com
+KLARNA_API_USERNAME=your_klarna_username_or_merchant_id
+KLARNA_API_PASSWORD=your_klarna_password_or_shared_secret
+PORT=3000
 ```
+
+Obtain credentials from the [Klarna Merchant Portal](https://merchantportal.klarna.com/). Use the Playground URL for testing; switch to the production API URL when ready.
 
 ## Running the Server
 
-Development (auto-restarts with changes):
+Development (auto-restarts on file changes):
 
 ```bash
 yarn dev
@@ -44,54 +43,67 @@ Production:
 yarn start
 ```
 
-The server will start on `http://localhost:3000` by default.
+The server starts at `http://localhost:3000` by default.
 
-## Configuration
+## Usage
 
-The `/client_token` endpoint will return the value of the `KLARNA_CLIENT_TOKEN` environment variable if set; otherwise it returns a placeholder string.
+1. **Create Session** — Select a country/currency preset and amount, then click "Create Session". The server calls Klarna's Payments API and returns a `client_token`.
+2. **Authorize Payment** — The Klarna widget loads automatically. Click "Continue with Klarna" to authorize. On success you receive an `authorization_token`.
+3. **Manage Order** — After placing an order, use the Order Management section to query, capture, cancel, or refund.
 
-Set a token for testing:
+## API Endpoints
 
-```bash
-export KLARNA_CLIENT_TOKEN="your_client_token_here"
-```
+| Endpoint | Method | Description |
+|---|---|---|
+| `/health` | GET | Health check with uptime and config status |
+| `/api/session` | POST | Create a Klarna payment session |
+| `/api/create_order` | POST | Place an order with an authorization token |
+| `/api/orders/:id` | GET | Query order details |
+| `/api/orders/:id/captures` | POST | Capture authorized amount |
+| `/api/orders/:id/cancel` | POST | Cancel an order |
+| `/api/orders/:id/refunds` | POST | Refund a captured order |
+| `/api/webhooks/klarna` | POST | Receive Klarna push notifications |
 
-To run the server on a different port:
+## Features
 
-```bash
-export PORT=8080
-yarn dev
-```
-
-Obtain your client token from the [Klarna Merchant Portal](https://merchantportal.klarna.com/).
-
-You can also create a `.env` file in the project root to store those environment variables locally. An example file `.env.example` is included.
-
-Example `.env` contents:
-
-```text
-KLARNA_CLIENT_TOKEN=your_client_token_here
-PORT=3000
-```
-
-For the end-to-end Klarna Payments integration (creating sessions and orders) the server needs merchant credentials. Set the following environment variables in your `.env` (or in your CI environment):
-
-```text
-KLARNA_API_URL=https://api.playground.klarna.com
-KLARNA_API_USERNAME=your_klarna_username_or_merchant_id
-KLARNA_API_PASSWORD=your_klarna_password_or_shared_secret
-PORT=3000
-```
-
-Notes:
-- Use the Klarna Playground (`https://api.playground.klarna.com`) for testing. Change to the production API when ready.
-- The demo `POST /api/session` endpoint creates a payments session and returns the `client_token`. The client uses this token to initialize the Klarna JS SDK.
-- The demo `POST /api/create_order` accepts an `authorization_token` from the client and returns success. R
+- **Country/currency presets** — Quick-select from US, SE, DE, GB, AU, and more
+- **Human-readable amount input** — Enter amounts in major units (e.g. $100.00); auto-converts to minor units
+- **Step-by-step flow** — Progressive disclosure guides you through session -> authorization -> order management
+- **Loading states** — Spinners and disabled buttons during API calls
+- **Input validation** — Server-side validation of countries, currencies, amounts, and order IDs
+- **Rate limiting** — 30 requests/minute per IP on API endpoints
+- **Retry logic** — Automatic retries with exponential backoff for transient Klarna API failures
+- **Request logging** — Logs method, path, status code, and response time for every request
+- **Health check** — `GET /health` for monitoring
 
 ## Project Structure
 
-- `server.js` - Express server with `/client_token` endpoint
-- `public/index.html` - Frontend with Klarna Payments widget
-- `public/styles.css` - Stylesheet
-- `public/script.js` - Script js file
-- `package.json` - npm dependencies and scripts
+```
+klarna-payments-demo/
+├── server.js              Express server with API routes and Klarna integration
+├── public/
+│   ├── index.html         Frontend with payment widget and order management UI
+│   ├── script.js          Client-side logic, presets, loading states
+│   └── styles.css         Stylesheet with responsive design
+├── tests/
+│   └── server.test.js     API route tests (Jest + Supertest)
+├── package.json           Dependencies and scripts
+├── .env.example           Example environment variables
+├── .eslintrc.json         ESLint configuration
+└── .prettierrc            Prettier configuration
+```
+
+## Development
+
+Lint and format:
+
+```bash
+yarn lint
+yarn format
+```
+
+Run tests:
+
+```bash
+yarn test
+```
